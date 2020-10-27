@@ -1,0 +1,11 @@
+Code-Review+1: Sylvain Desbureaux <sylvain.desbureaux@orange.com>
+Code-Review+1: Bogumil Zebek <bogumil.zebek@nokia.com>
+Code-Review+1: Pawel Baniewski <pawel.baniewski@nokia.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+2: Krzysztof Opasiak <k.opasiak@samsung.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+Submitted-at: Tue, 27 Oct 2020 17:37:55 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/oom/utils/+/113989
+Project: oom/utils
+Branch: refs/heads/master
