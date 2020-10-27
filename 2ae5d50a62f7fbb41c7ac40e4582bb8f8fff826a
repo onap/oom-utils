@@ -1,0 +1,11 @@
+Code-Review+2: LF Jenkins CI <releng+lf-jobbuilder@linuxfoundation.org>
+Code-Review+1: Sylvain Desbureaux <sylvain.desbureaux@orange.com>
+Code-Review+1: Bogumil Zebek <bogumil.zebek@nokia.com>
+Code-Review+1: Pawel Baniewski <pawel.baniewski@nokia.com>
+Code-Review+2: Krzysztof Opasiak <k.opasiak@samsung.com>
+Verified+1: LF Jenkins CI <releng+lf-jobbuilder@linuxfoundation.org>
+Submitted-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+Submitted-at: Tue, 27 Oct 2020 17:50:07 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/oom/utils/+/113988
+Project: oom/utils
+Branch: refs/heads/master
