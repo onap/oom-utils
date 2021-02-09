@@ -16,6 +16,7 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
+. ./utils.sh
 
 # Arguments renaming
 arguments_number=$#
@@ -26,13 +27,14 @@ vendor=$4
 configmap_filename=$5
 configmap_name=$6
 snippet_filename=$7
+specs_directory=$8
+generation_directory=$9
 
 # Constants
 SCHEMA_MAP_FILENAME="schema-map.json"
+SCHEMA_MAP_NAME="schema-map"
 SUCCESS_CODE=0
 TREE=tree
-EXPECTED_1_ARG=1
-EXPECTED_7_ARGS=7
 INDENTATION_LEVEL_1=1
 INDENTATION_LEVEL_2=2
 INDENTATION_LEVEL_3=3
@@ -43,6 +45,12 @@ INDENTATION_LEVEL_5=5
 tmp_location=$(mktemp -d)
 valid_branches=""
 
+# Create and move to directory for storing generated files
+move_to_generation_directory() {
+  mkdir "$generation_directory"
+  cd ./"$generation_directory"
+}
+
 # Indents each line of string by adding indent_size*indent_string spaces on the beginning
 # Optional argument is indent_string level, default: 1
 # correct usage example:
@@ -52,16 +60,6 @@ indent_string() {
   indent_string=1
   if [ -n "$1" ]; then indent_string=$1; fi
   pr -to $(expr "$indent_string" \* "$indent_size")
-}
-
-# Checks whether number of arguments is valid
-# $1 is actual number of arguments
-# $2 is expected number of arguments
-check_arguments() {
-  if [ "$1" -ne "$2" ]; then
-    echo "Incorrect number of arguments"
-    exit 1
-  fi
 }
 
 # Clones all branches selected in $BRANCH from $repo_url
@@ -94,15 +92,18 @@ clone_branch() {
 
 # Creates file with name $configmap_filename
 # Inserts ConfigMap metadata and sets name as $configmap_name
+# $1 - branch name
 add_config_map_metadata() {
-  echo "Creating ConfigMap spec file: $configmap_filename"
-  cat << EOF > "$configmap_filename"
+  branch_configmap_filename="$1-${configmap_filename}"
+  branch_configmap_name=$( echo "$1-$configmap_name" | tr '[:upper:]' '[:lower:]' )
+  echo "Creating ConfigMap spec file: $branch_configmap_filename"
+  cat << EOF > "$branch_configmap_filename"
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: $configmap_name
+  name: $branch_configmap_name
   labels:
-    name: $configmap_name
+    name: $branch_configmap_name
   namespace: onap
 data:
 EOF
@@ -111,44 +112,53 @@ EOF
 # For each selected branch:
 #   clones the branch from repository,
 #   adds schemas from branch to ConfigMap spec
+# $1 - branch name
 add_schemas() {
-  for actual_branch in $valid_branches; do
-    echo "Adding schemas from branch $actual_branch to spec"
-    add_schemas_from_branch "$actual_branch"
-  done
+  echo "Adding schemas from branch $1 to spec"
+  add_schemas_from_branch "$1"
 }
 
 # Adds schemas from single branch to spec
 # $1 - branch name
 add_schemas_from_branch() {
+  branch_configmap_filename="$1-${configmap_filename}"
   check_arguments $# $EXPECTED_1_ARG
   schemas=$(ls -g $tmp_location/$1/$schemas_location/*.yaml | awk '{print $NF}')
   for schema in $schemas; do
     echo "$1-$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
     cat "$schema" | indent_string $INDENTATION_LEVEL_2
   done
-} >> "$configmap_filename"
+} >> "$branch_configmap_filename"
+
+move_to_spec_directory() {
+  mkdir "$specs_directory"
+  cd ./"$specs_directory"
+}
 
 # Generates mapping file for collected schemas directly in spec
+# $1 - schema map name
 generate_mapping_file() {
+  schema_map_filename="$1-${configmap_filename}"
   echo "Generating mapping file in spec"
-  echo "$SCHEMA_MAP_FILENAME"": |-" | indent_string $INDENTATION_LEVEL_1 >> "$configmap_filename"
-  echo "[" | indent_string $INDENTATION_LEVEL_2 >> "$configmap_filename"
+  echo "$SCHEMA_MAP_FILENAME"": |-" | indent_string $INDENTATION_LEVEL_1 >> "$schema_map_filename"
+  echo "[" | indent_string $INDENTATION_LEVEL_2 >> "$schema_map_filename"
 
   for actual_branch in $valid_branches; do
     echo "Adding mappings from branch: $actual_branch"
-    add_mappings_from_branch "$actual_branch"
+    add_mappings_from_branch $actual_branch $schema_map_filename
   done
 
-  truncate -s-2 "$configmap_filename"
-  echo "" >> "$configmap_filename"
-  echo "]" | indent_string $INDENTATION_LEVEL_2 >> "$configmap_filename"
+  truncate -s-2 "$schema_map_filename"
+  echo "" >> "$schema_map_filename"
+  echo "]" | indent_string $INDENTATION_LEVEL_2 >> "$schema_map_filename"
 }
 
 # Adds mappings from single branch directly to spec
 # $1 - branch name
+# $2 - schema map file name
 add_mappings_from_branch() {
-  check_arguments $# $EXPECTED_1_ARG
+  check_arguments $# $EXPECTED_2_ARGS
+  schema_map_filename="$2"
   schemas=$(ls -g $tmp_location/$1/$schemas_location/*.yaml | awk '{print $NF}' )
 
   for schema in $schemas; do
@@ -158,16 +168,46 @@ add_mappings_from_branch() {
     public_url=$public_url_schemas_location/$TREE/$schema_repo_path
     local_url=$vendor/$repo_endpoint/$TREE/$schema_repo_path
 
-    echo "{" | indent_string $INDENTATION_LEVEL_3 >> "$configmap_filename"
-    echo "\"publicURL\": \"$public_url\"," | indent_string $INDENTATION_LEVEL_4 >> "$configmap_filename"
-    echo "\"localURL\": \"$local_url\"" | indent_string $INDENTATION_LEVEL_4 >> "$configmap_filename"
-    echo "}," | indent_string $INDENTATION_LEVEL_3 >> "$configmap_filename"
+    echo "{" | indent_string $INDENTATION_LEVEL_3 >> "$schema_map_filename"
+    echo "\"publicURL\": \"$public_url\"," | indent_string $INDENTATION_LEVEL_4 >> "$schema_map_filename"
+    echo "\"localURL\": \"$local_url\"" | indent_string $INDENTATION_LEVEL_4 >> "$schema_map_filename"
+    echo "}," | indent_string $INDENTATION_LEVEL_3 >> "$schema_map_filename"
   done
 }
 
+# Create snippet file to describe how to connect mount ConfigMaps in VES
 create_snippet() {
   echo "Generating snippets in file: $snippet_filename"
   generate_entries
+  base_mounts_path="/opt/app/VESCollector/etc/externalRepo"
+  base_mounts_name="custom-$vendor-schemas"
+  mounts_paths="
+        - mountPath: $base_mounts_path
+          name: $base_mounts_name"
+
+  config_maps="
+      - configMap:
+          defaultMode: 420
+          name: $SCHEMA_MAP_NAME-$configmap_name
+        name: $base_mounts_name"
+
+  for actual_branch in $valid_branches; do
+
+    actual_branch_name=$( echo "$actual_branch" | tr '[:upper:]' '[:lower:]' )
+
+    repo_endpoint=$(echo "$repo_url" | cut -d/ -f4- | rev | cut -d. -f2- | rev)
+    local_url=$vendor/$repo_endpoint/$TREE/$actual_branch/$schemas_location
+    mounts_paths="$mounts_paths
+        - mountPath: $base_mounts_path/$local_url
+          name: $actual_branch_name-$base_mounts_name"
+
+    config_maps="$config_maps
+      - configMap:
+          defaultMode: 420
+          name: $actual_branch_name-$configmap_name
+        name: $actual_branch_name-$base_mounts_name"
+  done
+
 
   cat << EOF > "$snippet_filename"
 Snippets for mounting ConfigMap in DCAE VESCollector Deployment
@@ -180,21 +220,11 @@ No extra configuration in VESCollector is needed with these snippets.
 
 ## Snippets
 #### spec.template.spec.containers[0].volumeMounts
-\`\`\`
-        - mountPath: /opt/app/VESCollector/etc/externalRepo
-          name: custom-$vendor-schemas
+\`\`\`$mounts_paths
 \`\`\`
 
 #### spec.template.spec.volumes
-\`\`\`
-      - configMap:
-          defaultMode: 420
-          items:
-          - key: $SCHEMA_MAP_FILENAME
-            path: schema-map.json
-$schemas_entries
-          name: $configmap_name
-        name: custom-$vendor-schemas
+\`\`\`$config_maps
 \`\`\`
 EOF
 }
@@ -214,14 +244,39 @@ generate_entries() {
   schemas_entries=$(echo "$schemas_entries" | indent_string $INDENTATION_LEVEL_5)
 }
 
+# Generate specs for branch
+# $1 - branch name
+generate_specs_for_branch() {
+  check_arguments $# $EXPECTED_1_ARG
+  add_config_map_metadata $1
+  add_schemas $1
+}
+
+# Generate specs for schema map
+generate_specs_for_schema_map() {
+  add_config_map_metadata "$SCHEMA_MAP_NAME"
+  generate_mapping_file "$SCHEMA_MAP_NAME"
+}
+
+# Generate specs for all releases and for schema map
+generate_specs() {
+  move_to_spec_directory
+  for actual_branch in $valid_branches; do
+    generate_specs_for_branch $actual_branch
+  done
+  generate_specs_for_schema_map
+  cd ..
+}
+
+
 # todo add check of global env whether script should be ran
 main() {
-  check_arguments $arguments_number $EXPECTED_7_ARGS
+  check_arguments $arguments_number $EXPECTED_9_ARGS
+  move_to_generation_directory
   clone_repo
-  add_config_map_metadata
-  add_schemas
-  generate_mapping_file
+  generate_specs
   create_snippet
+  move_to_starting_directory
 }
 
 main
