@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9db90a8_99648acb",
+        "filename": "external-schema-repo-generator/generator/generate.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-02-11T11:04:41Z",
+      "side": 1,
+      "message": "2020-2021",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 26
+      },
+      "revId": "c63d2f40543ad0301964ce06b925ddb7a2c3d33f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcac2770_bc101191",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-02-11T11:04:41Z",
+      "side": 1,
+      "message": "2020-2021",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 26
+      },
+      "revId": "c63d2f40543ad0301964ce06b925ddb7a2c3d33f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b05c5e4b_bd9aa97d",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-02-11T11:04:41Z",
+      "side": 1,
+      "message": "I think, this is not really a MAX_SPEC_SIZE. MAX K8S spec size is 1MB.\nThis 262144 -- is actually related to configMaps, which cannot be updated \n(such need to be deleted and then created).\n\n\nIf I am not wrong-- perhaps we could find a better name for this restriction?",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 13
+      },
+      "revId": "c63d2f40543ad0301964ce06b925ddb7a2c3d33f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
