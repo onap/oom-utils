@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ============LICENSE_START=======================================================
 # OOM
@@ -34,7 +34,7 @@ generation_directory=$9
 SCHEMA_MAP_FILENAME="schema-map.json"
 SCHEMA_MAP_NAME="schema-map"
 SUCCESS_CODE=0
-TREE=tree
+TREE=blob
 INDENTATION_LEVEL_1=1
 INDENTATION_LEVEL_2=2
 INDENTATION_LEVEL_3=3
@@ -67,6 +67,11 @@ clone_repo() {
   for actual_branch in $branches; do
     clone_branch "$actual_branch"
   done
+  schemas=$(ls -g $tmp_location/$actual_branch/$schemas_location/*.yaml | awk '{print $NF}')
+  for schema in $schemas; do
+    resolve_remote_refs "$schema"
+  done
+
 }
 
 # Clones single branch $1 from $repo_url.
@@ -125,7 +130,7 @@ add_schemas_from_branch() {
   check_arguments $# $EXPECTED_1_ARG
   schemas=$(ls -g $tmp_location/$1/$schemas_location/*.yaml | awk '{print $NF}')
   for schema in $schemas; do
-    echo "$1-$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
+    echo "$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
     cat "$schema" | indent_string $INDENTATION_LEVEL_2
   done
 } >> "$branch_configmap_filename"
