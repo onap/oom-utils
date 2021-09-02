@@ -29,12 +29,13 @@ configmap_name=$6
 snippet_filename=$7
 specs_directory=$8
 generation_directory=$9
+_5g_api_repo_url=${10}
 
 # Constants
 SCHEMA_MAP_FILENAME="schema-map.json"
 SCHEMA_MAP_NAME="schema-map"
 SUCCESS_CODE=0
-TREE=tree
+TREE=blob
 INDENTATION_LEVEL_1=1
 INDENTATION_LEVEL_2=2
 INDENTATION_LEVEL_3=3
@@ -67,25 +68,100 @@ clone_repo() {
   for actual_branch in $branches; do
     clone_branch "$actual_branch"
   done
+  #schemas=$(ls -g $tmp_location/$actual_branch/$schemas_location/*.yaml | awk '{print $NF}')
+  #for schema in $schemas; do
+  #  resolve_remote_refs "$schema" "$tmp_location"
+  #done
+  #scheamaHelperDirs
+
 }
 
 # Clones single branch $1 from $repo_url.
 # $1 - branch name
 clone_branch() {
   check_arguments $# $EXPECTED_1_ARG
-  if [ -d $tmp_location/"$1" ]; then
-    echo "Skipping cloning repository."
-    echo "Branch $1 has already been cloned in the directory ./$tmp_location/$1"
-    echo "To redownload branch remove ./$tmp_location/$1."
-  else
-    echo "Cloning repository from branch $1"
-    git clone --quiet --single-branch --branch "$1" "$repo_url" "$tmp_location/$1" 2>/dev/null
-    result=$?
-    if [ $result -ne $SUCCESS_CODE ] ; then
-      echo "Problem with cloning branch $1."
-      echo "Branch $1 will not be added to spec."
+  configmapSize=800000
+  branch=""
+  # check if OPEN API branch value provided by user contains 5G API branch after colon for example: Rel-16-SA-91:TSG91-Rel16
+  if [ -z "${1##*":"*}" ]; then
+    OpenApiBranch=${1%:*}
+    _5GApiBranch=${1#"$OpenApiBranch"}
+    _5GApiBranch=${_5GApiBranch#:}
+    if [ -d $tmp_location/"$OpenApiBranch" ]; then
+      echo "Skipping cloning repository."
+      echo "Branch $OpenApiBranch has already been cloned in the directory ./$tmp_location/$OpenApiBranch"
+      echo "To redownload branch remove ./$tmp_location/$OpenApiBranch."
     else
-      valid_branches="${valid_branches} $1"
+      echo "Cloning repository from branch $OpenApiBranch"
+      git clone --quiet --single-branch --branch "$OpenApiBranch" "$repo_url" "$tmp_location/$OpenApiBranch" 2>/dev/null
+      OpenApiBranchResult=$?
+      # clones 5G API branch moves schemas to OPEN API, splits folder to folder less than 1mb
+      echo "Cloning repository from branch $_5GApiBranch"
+      git clone --quiet --single-branch --branch "$_5GApiBranch" "$_5g_api_repo_url" "$tmp_location/$OpenApiBranch/$schemas_location/$_5GApiBranch" 2>/dev/null
+      _5GApiBranchResult=$?
+      mv $tmp_location/$OpenApiBranch/$schemas_location/$_5GApiBranch/*.yaml $tmp_location/$OpenApiBranch/$schemas_location/
+      dirSize=$(du -bs $tmp_location/$OpenApiBranch/$schemas_location/ | cut -f1)
+      if [ "$configmapSize" -le "$dirSize"  ]; then
+	find $tmp_location/$OpenApiBranch/$schemas_location/ -type f -iname '*yaml' -printf "%s %p\n" | awk -v c=$configmapSize -v tmpLocation=$tmp_location -v schema=$OpenApiBranch -f bin_packing.awk
+	# adds each folder as valid branch to generate separate configmap (less then 1 mb) for each folder
+	for i in $(ls -d -p $tmp_location/${OpenApiBranch}-* |  grep -Eo '[^/]+/?$' | cut -d / -f1); do branch="${branch} $i"; done
+      else
+	branch=$OpenApiBranch
+      fi
+      # fix schema file references both remote and local against folder structure for whole schema
+      fix_schema_references $tmp_location $OpenApiBranch $schemas_location
+      if  [ $OpenApiBranchResult -ne $SUCCESS_CODE ] && [ $_5GApiBranchResult -ne $SUCCESS_CODE ] ; then
+        echo "Problem with cloning branch $OpenApiBranch."
+        echo "Branch $OpenApiBranch= will not be added to spec."
+      else
+        valid_branches="${valid_branches} $branch"
+        echo "valid_branches: $valid_branches"
+      fi
+    fi
+  else
+    OpenApiBranch=$1
+    if [ -d $tmp_location/"$OpenApiBranch" ]; then
+      echo "Skipping cloning repository."
+      echo "Branch $OpenApiBranch has already been cloned in the directory ./$tmp_location/$OpenApiBranch"
+      echo "To redownload branch remove ./$tmp_location/$OpenApiBranch."
+    else
+      echo "Cloning repository from branch $OpenApiBranch"
+      git clone --quiet --single-branch --branch "$OpenApiBranch" "$repo_url" "$tmp_location/$OpenApiBranch" 2>/dev/null
+      OpenApiBranchResult=$?
+      branch=""
+      # script checks schema files if they don’t contain remote refs to 5G API even user didn't define it after colon for example: Rel-16-SA-91:TSG91-Rel16
+      # if contain then script parse repo tag from reference checkouts it, split to folders, resolve refs and cerates configmap for each folder
+      _5GApiBranch=$(check5GApiBranchExistenceInRefs "$tmp_location/$OpenApiBranch/$schemas_location")
+      if [ ! -z "$_5GApiBranch" ]; then
+	echo "Cloning repository from branch $_5GApiBranch"
+        git clone --quiet --single-branch --branch "$_5GApiBranch" "$_5g_api_repo_url" "$tmp_location/$OpenApiBranch/$schemas_location/$_5GApiBranch" 2>/dev/null
+	_5GApiBranchResult=$?
+        mv $tmp_location/$OpenApiBranch/$schemas_location/$_5GApiBranch/*.yaml $tmp_location/$OpenApiBranch/$schemas_location
+        dirSize=$(du -bs $tmp_location/$OpenApiBranch/$schemas_location/ | cut -f1)
+        if [ "$configmapSize" -le "$dirSize"  ]; then
+          find $tmp_location/$OpenApiBranch/$schemas_location/ -type f -iname '*yaml' -printf "%s %p\n" | awk -v c=$configmapSize -v tmpLocation=$tmp_location -v schema=$OpenApiBranch -f bin_packing.awk
+          for i in $(ls -d -p $tmp_location/${OpenApiBranch}-* |  grep -Eo '[^/]+/?$' | cut -d / -f1); do branch="${branch} $i"; done
+        else
+          branch=$OpenApiBranch
+        fi
+        fix_schema_references $tmp_location $OpenApiBranch $schemas_location
+	if  [ ! -z "$_5GApiBranch" ] && [ $_5GApiBranchResult -ne $SUCCESS_CODE ] && [ $OpenApiBranchResult -ne $SUCCESS_CODE ]  ; then
+          echo "Problem with cloning branch $OpenApiBranch."
+          echo "Branch $OpenApiBranch= will not be added to spec."
+        else
+          valid_branches="${valid_branches} $branch"
+          echo "valid_branches: $valid_branches"
+        fi
+      #if schema files don't contain remote refs to 5G API script goes with old path and doesn't checkout 5G API branch
+      else
+        if  [ $OpenApiBranchResult -ne $SUCCESS_CODE ] ; then
+          echo "Problem with cloning branch $OpenApiBranch."
+          echo "Branch $OpenApiBranch= will not be added to spec."
+        else
+          valid_branches="${valid_branches} $OpenApiBranch"
+	  echo "valid_branches: $valid_branches"
+        fi
+      fi
     fi
   fi
 }
@@ -125,7 +201,7 @@ add_schemas_from_branch() {
   check_arguments $# $EXPECTED_1_ARG
   schemas=$(ls -g $tmp_location/$1/$schemas_location/*.yaml | awk '{print $NF}')
   for schema in $schemas; do
-    echo "$1-$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
+    echo "$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
     cat "$schema" | indent_string $INDENTATION_LEVEL_2
   done
 } >> "$branch_configmap_filename"
@@ -164,8 +240,9 @@ add_mappings_from_branch() {
   for schema in $schemas; do
     repo_endpoint=$(echo "$repo_url" | cut -d/ -f4- | rev | cut -d. -f2- | rev)
     schema_repo_path=$(echo "$schema" | cut -d/ -f4-)
+    schema_repo_path_fixed=$(echo "$schema_repo_path" | sed -r "s%"-subdir-[0-9]"%%" )
     public_url_schemas_location=${repo_url%.*}
-    public_url=$public_url_schemas_location/$TREE/$schema_repo_path
+    public_url=$public_url_schemas_location/$TREE/$schema_repo_path_fixed
     local_url=$vendor/$repo_endpoint/$TREE/$schema_repo_path
 
     echo "{" | indent_string $INDENTATION_LEVEL_3 >> "$schema_map_filename"
@@ -182,7 +259,7 @@ create_snippet() {
   base_mounts_path="/opt/app/VESCollector/etc/externalRepo"
   base_mounts_name="external-repo-$vendor-schemas"
   mounts_paths="
-        - mountPath: $base_mounts_path/schema-map
+        - mountPath: $base_mounts_path
           name: $base_mounts_name"
 
   config_maps="
@@ -271,9 +348,9 @@ generate_specs() {
 
 # todo add check of global env whether script should be ran
 main() {
-  check_arguments $arguments_number $EXPECTED_9_ARGS
-  move_to_generation_directory
+  check_arguments $arguments_number $EXPECTED_10_ARGS
   clone_repo
+  move_to_generation_directory
   generate_specs
   create_snippet
   move_to_starting_directory
