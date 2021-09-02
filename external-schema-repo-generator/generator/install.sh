@@ -63,7 +63,7 @@ install_config_map() {
   spec_size="$2"
   if [ "$spec_size" -le $MAX_CONFIG_MAP_UPDATE_SIZE ]; then
     echo "Applying ConfigMap $k8s_configmap_name"
-    kubectl_onap apply -f "$spec_filename"
+    kubectl_onap apply -f "$spec_filename"  
   else
     create_config_map
   fi
