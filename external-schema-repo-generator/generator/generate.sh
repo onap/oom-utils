@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ============LICENSE_START=======================================================
 # OOM
@@ -66,6 +66,10 @@ indent_string() {
 clone_repo() {
   for actual_branch in $branches; do
     clone_branch "$actual_branch"
+  done
+  schemas=$(ls -g $tmp_location/$actual_branch/$schemas_location/*.yaml | awk '{print $NF}')
+  for schema in $schemas; do
+    resolve_remote_refs "$schema"
   done
 }
 
