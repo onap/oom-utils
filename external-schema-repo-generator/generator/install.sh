@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ============LICENSE_START=======================================================
 # OOM
@@ -51,7 +51,7 @@ check_if_spec_exists() {
 create_config_map() {
   echo "ConfigMap spec file is too long for 'kubectl apply'. Actual spec length: $spec_size, max spec length: $MAX_CONFIG_MAP_UPDATE_SIZE"
   echo "Creating new ConfigMap $k8s_configmap_name"
-  kubectl_onap replace --force -f "$spec_filename"
+  ${BASH_ALIASES[kubectl_onap]} replace --force -f "$spec_filename"
 }
 
 # Install ConfigMap from spec
@@ -63,7 +63,7 @@ install_config_map() {
   spec_size="$2"
   if [ "$spec_size" -le $MAX_CONFIG_MAP_UPDATE_SIZE ]; then
     echo "Applying ConfigMap $k8s_configmap_name"
-    kubectl_onap apply -f "$spec_filename"
+    ${BASH_ALIASES[kubectl_onap]} apply -f "$spec_filename"
   else
     create_config_map
   fi
