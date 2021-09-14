@@ -121,11 +121,11 @@ add_schemas() {
 # Adds schemas from single branch to spec
 # $1 - branch name
 add_schemas_from_branch() {
-  branch_configmap_filename="${configmap_filename}-$1.yaml"
   check_arguments $# $EXPECTED_1_ARG
+  branch_configmap_filename="${configmap_filename}-$1.yaml"
   schemas=$(ls -g $tmp_location/$1/$schemas_location/*.yaml | awk '{print $NF}')
   for schema in $schemas; do
-    echo "$1-$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
+    echo "$(basename $schema): |-" | indent_string $INDENTATION_LEVEL_1
     cat "$schema" | indent_string $INDENTATION_LEVEL_2
   done
 } >> "$branch_configmap_filename"
