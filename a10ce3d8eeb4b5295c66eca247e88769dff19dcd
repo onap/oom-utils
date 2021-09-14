@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae484582_30898a0d",
+        "filename": "external-schema-repo-generator/generator/clean.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-14T07:15:22Z",
+      "side": 1,
+      "message": "no modification here \u003d\u003e please elaborate if there is any bashism here  \u003d\u003e vote -1",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a27fd1b_670eca0b",
+        "filename": "external-schema-repo-generator/generator/generate.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-14T07:15:22Z",
+      "side": 1,
+      "message": "I might be wrong but I can\u0027t see any bashism in the moficiations added here that would require updating this shebang \u003d\u003e vote -1",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8085a709_10dec868",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-14T07:15:22Z",
+      "side": 1,
+      "message": "this alias is defined at line 33\nplease explain why it doesn\u0027t work ?\nAnd if so, why not embedding it in the function rather than adding a bashism ?",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14ded498_939226a9",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-14T07:15:22Z",
+      "side": 1,
+      "message": "idem",
+      "range": {
+        "startLine": 66,
+        "startChar": 4,
+        "endLine": 66,
+        "endChar": 6
+      },
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7fbc365_75f7e942",
+        "filename": "external-schema-repo-generator/generator/utils.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-14T07:15:22Z",
+      "side": 1,
+      "message": "Arrays can be a good reason to use bash or korn shell but there is often another better solution.\nFor small usages, there is often a custom solution  more efficient than arrays.\nGeneric patterns given as examples of drop-in replacement are usually less efficient than using bash arrays and must be avoided when possible.\n\n\nHere are some pointers\nhttps://mywiki.wooledge.org/Bashism#arrays\nhttp://www.etalabs.net/sh_tricks.html \u003d\u003e working_with_arrays",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
