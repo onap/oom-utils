@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "224c15d2_0facf521",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:19:52Z",
+      "side": 1,
+      "message": "dash before each point would ease the reading",
+      "revId": "0944681d85096c1c3dadb7c8e37668ac866d9b4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "678160d8_3f3d9bda",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:19:52Z",
+      "side": 1,
+      "message": "each ?",
+      "range": {
+        "startLine": 15,
+        "startChar": 12,
+        "endLine": 15,
+        "endChar": 15
+      },
+      "revId": "0944681d85096c1c3dadb7c8e37668ac866d9b4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
