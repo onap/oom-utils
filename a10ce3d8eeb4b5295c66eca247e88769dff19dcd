@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2e01fc6a_6aeb5c2b",
+        "filename": "external-schema-repo-generator/generator/clean.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:10:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ae484582_30898a0d",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0a27fd1b_670eca0b",
         "filename": "external-schema-repo-generator/generator/generate.sh",
         "patchSetId": 7
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a35ef1b4_912f3437",
+        "filename": "external-schema-repo-generator/generator/generate.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:10:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0a27fd1b_670eca0b",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8085a709_10dec868",
         "filename": "external-schema-repo-generator/generator/install.sh",
         "patchSetId": 7
@@ -50,6 +86,24 @@
       "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdb97803_f9102310",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:10:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8085a709_10dec868",
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -73,6 +127,30 @@
       "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b20660dc_b482d42e",
+        "filename": "external-schema-repo-generator/generator/install.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3685
+      },
+      "writtenOn": "2021-09-23T13:10:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "14ded498_939226a9",
+      "range": {
+        "startLine": 66,
+        "startChar": 4,
+        "endLine": 66,
+        "endChar": 6
+      },
+      "revId": "a10ce3d8eeb4b5295c66eca247e88769dff19dcd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
