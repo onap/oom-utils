@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06f6af13_7cc251b1",
+        "filename": "external-schema-repo-generator/generator/environment.config",
+        "patchSetId": 16
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-09-27T16:46:01Z",
+      "side": 1,
+      "message": "TSG91-Rel16 refers to tag, so this should be change repo tag (instead of branch)",
+      "range": {
+        "startLine": 17,
+        "startChar": 47,
+        "endLine": 17,
+        "endChar": 54
+      },
+      "revId": "fdd96ef82176ea598e4e8c49025f6c85f37a8d8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4fcd9bd_4528cfd1",
+        "filename": "external-schema-repo-generator/generator/environment.config",
+        "patchSetId": 16
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-09-27T16:46:01Z",
+      "side": 1,
+      "message": "with",
+      "range": {
+        "startLine": 19,
+        "startChar": 85,
+        "endLine": 19,
+        "endChar": 89
+      },
+      "revId": "fdd96ef82176ea598e4e8c49025f6c85f37a8d8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef11f98a_fa193dfa",
+        "filename": "external-schema-repo-generator/generator/environment.config",
+        "patchSetId": 16
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-09-27T16:46:01Z",
+      "side": 1,
+      "message": "parse",
+      "range": {
+        "startLine": 21,
+        "startChar": 57,
+        "endLine": 21,
+        "endChar": 62
+      },
+      "revId": "fdd96ef82176ea598e4e8c49025f6c85f37a8d8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b80b21e3_2cb49440",
+        "filename": "external-schema-repo-generator/generator/environment.config",
+        "patchSetId": 16
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-09-27T16:46:01Z",
+      "side": 1,
+      "message": "with",
+      "range": {
+        "startLine": 22,
+        "startChar": 47,
+        "endLine": 22,
+        "endChar": 51
+      },
+      "revId": "fdd96ef82176ea598e4e8c49025f6c85f37a8d8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
